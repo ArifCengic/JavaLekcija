@@ -1,45 +1,23 @@
 package com.company;
 
+import com.sun.webkit.WebPageClient;
 import javafx.scene.input.DataFormat;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    enum IZBOR {NA, NoviKorisnik, IzbrisatiKorisnika, IzlistatiSveKorisnike, PronadjiKorisnika, ExitProgram}
+    enum IZBOR { NA, NoviKorisnik, IzbrisatiKorisnika, IzlistatiSveKorisnike, PronadjiKorisnika, ExitProgram}
 
     ;
     static ArrayList<Korisnik> korisnici = new ArrayList<>();
 
     public static void main(String[] args) {
-
         //   Scanner in = new Scanner(System.in);
 
-//        try
-//        {
-//            System.out.println("Unesite godinu rodjenja");
-//            int godinaRodjenja = in.nextInt();
-//            int prestupneGodine = prebrojatiPrestupneGodine(godinaRodjenja);
-//            System.out.println("Broj prestupnih godina je " + prestupneGodine);
-//        }
-//        catch (Exception e)
-//        {
-//            //we have an Error
-//            System.out.println("Error je " + e.toString());
-//            return;
-//        }
-
-        try {
-            DeserializeKorisnike();
-        } catch (Exception e) {
-            //do nothing
-        }
-
-
+        writeToFile();
+        readFromFile();
         int izbor = 0;
         do {
             //TODO clear screen before showing all options
@@ -53,8 +31,9 @@ public class Main {
 
             System.out.println("7: Exit Program ");
             System.out.println("---");
-             Scanner in = new Scanner(System.in);
-            izbor = in.nextInt();
+            Scanner in = new Scanner(System.in);
+            try {
+                izbor = in.nextInt();
 
             switch (izbor) {
                 case 1:
@@ -93,10 +72,21 @@ public class Main {
                  //   break;
 
                 default:
-                    System.out.println("Unijeli ste pogresan izbor. Mora biti 1-5");
-                    break;
+                    throw  new Exception("Unijeli ste pogresan izbor. Mora biti 1-7");
+                    //break;
             }
 
+            } //end try
+            catch (InputMismatchException e)
+            {
+                System.out.println("Unesite broj");
+                continue;
+            }
+            catch (Exception e)
+            {
+                System.out.println(e.getMessage());
+                continue;
+            }
 
         } while (izbor != 5);
 
@@ -125,6 +115,38 @@ public class Main {
         return countGodine;
     }
 
+    static void writeToFile()
+    {
+        try {
+            FileWriter fileOut = new FileWriter("Korisnik.txt");
+            BufferedWriter out = new BufferedWriter(fileOut);
+            out.write("Test Korisnik");
+            System.out.printf("Data is saved in Korisnik.txt");
+            out.close();
+            fileOut.close();
+        }
+        catch (IOException i)
+        {
+            i.printStackTrace();
+        }
+    }
+
+    static void readFromFile()
+    {
+        try {
+            FileReader fileIn = new FileReader("Korisnik.txt");
+            BufferedReader in = new BufferedReader(fileIn);
+            String line = in.readLine();
+            System.out.printf(line);
+            in.close();
+            fileIn.close();
+        }
+        catch (IOException i)
+        {
+            i.printStackTrace();
+        }
+    }
+
 
     static void noviKorisnik() {
          Scanner in = new Scanner(System.in);
@@ -136,7 +158,12 @@ public class Main {
         String email;
         do {
             try {
-                email = Korisnik.getEmail();
+                String unos;
+                System.out.print("\n Unesite email \n");
+               // Scanner in = new Scanner(System.in);
+                unos = in.nextLine();
+                
+                email = Korisnik.setEmail(unos);
                 break;
             } catch (Exception e) {
                 System.out.println("Email nije validan. " + e.getMessage());
@@ -176,7 +203,7 @@ public class Main {
         //Start        Stop                     Step
         for (int count = 0; count < korisnici.size(); count++) {
             Korisnik k = korisnici.get(count);
-            System.out.println(count + "-Ime " + k.getName());
+            System.out.println( k.toString());
         }
 
         //foreach
@@ -249,24 +276,7 @@ public class Main {
                 c.printStackTrace();
                 return;
             }
-//        String sifra;
-//        int count  = 0;
-//        do {
-//            System.out.println("Unesite sifru:");
-//            sifra = in.nextLine();
-//            count++;
-//        } while (!sifra.equals(ja.mojaSifra) && count < 3);
-//
-//        if(sifra.equals(ja.mojaSifra))
-//        {
-//            System.out.println("Hi " + ja.name + " Pogodili ste Password iz " + count + " puta");
-//        }
-//        else
-//        {
-//            ja.status = Korisnik.STATUS.BLOCKED;
-//            System.out.println("Hi " + ja.name +" broj pokusaja je veci od 3.");
-//            System.out.println("Korisnik je blokiran");
-//        }
+
 
         }
 

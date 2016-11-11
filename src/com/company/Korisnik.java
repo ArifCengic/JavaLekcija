@@ -1,5 +1,6 @@
 package com.company;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -9,6 +10,14 @@ public class Korisnik implements java.io.Serializable // dobijamo gratis Object 
     static int count = 0;
     enum POL { NOT_AVAILABLE, MALE, FEMALE };
     enum STATUS { ACTIVE, DELETED, BLOCKED};
+
+    public String toString()
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-YYYY");
+        String sDate = (dob == null) ? "NEMA" : sdf.format(dob);
+
+        return name + "," + email + "," + sDate + ","+ getPol().charAt(0) + "," + "A \n";
+    }
 
     Date dob; //date of birth
 // long broji seconds since 1-1-1970
@@ -57,7 +66,7 @@ public class Korisnik implements java.io.Serializable // dobijamo gratis Object 
 
 
     //m ili M za musko, f ili F za zensko
-    public void setPol(char c)
+    public void setPol(char c) throws Exception
     {
 //        if (c == 'm' || c == 'M') pol = POL.MALE;
 //        if (c == 'f' || c == 'F') pol = POL.FEMALE;
@@ -74,13 +83,14 @@ public class Korisnik implements java.io.Serializable // dobijamo gratis Object 
                 pol = POL.FEMALE;
                 break;
             default:
-                //TODO Error invalid value
-                break;
+                throw new Exception("Error invalid value");
+              //  break;
 
         }
     }
 
-    public String getPol() {
+    public String getPol()
+    {
         String sPol;
         //pol = 99;  //Error
 
@@ -98,32 +108,28 @@ public class Korisnik implements java.io.Serializable // dobijamo gratis Object 
     }
 
     // manje od 8 karaktera a zavrsava sa brojem
-    static public boolean validatePassword(String sifra) {
+    static public void validatePassword(String sifra) throws Exception
+    {
         if (sifra.length() >= 8) {
-            System.out.println("Password mora biti kraci od 8 karaktera");
-            return false;
+            throw new Exception("Password mora biti kraci od 8 karaktera");
+
         }
 
         char zadnji = sifra.charAt(sifra.length() - 1);
 
         if (!Character.isDigit(zadnji)) {
-            System.out.println("Password se mora zavrsavati sa brojem");
-            return false;
+            throw new Exception("Password se mora zavrsavati sa brojem");
         }
 
-        return true; // pasword je validan
+        return;
     }
 
     public String getSifru() {
         return mojaSifra;
     }
-    static String getEmail() throws Exception
+
+    static String setEmail(String email) throws Exception
     {
-       // final String ERROR = "ERROR";
-        String email;
-        System.out.print("\n Unesite email \n");
-        Scanner in = new Scanner(System.in);
-        email = in.nextLine();
 
         if (!email.contains("@"))  //string email contains @
         {

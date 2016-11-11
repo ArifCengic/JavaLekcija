@@ -82,6 +82,11 @@ public class Korisnik implements java.io.Serializable // dobijamo gratis Object 
             case 'F':
                 pol = POL.FEMALE;
                 break;
+
+            case 'n':
+            case 'N':
+                pol = POL.NOT_AVAILABLE;
+                break;
             default:
                 throw new Exception("Error invalid value");
               //  break;

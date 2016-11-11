@@ -8,15 +8,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Main {
-    enum IZBOR { NA, NoviKorisnik, IzbrisatiKorisnika, IzlistatiSveKorisnike, PronadjiKorisnika, ExitProgram}
-
-    ;
+    enum IZBOR { NA, NoviKorisnik, IzbrisatiKorisnika, IzlistatiSveKorisnike, PronadjiKorisnika, ExitProgram};
     static ArrayList<Korisnik> korisnici = new ArrayList<>();
 
     public static void main(String[] args) {
         //   Scanner in = new Scanner(System.in);
 
-        writeToFile();
         readFromFile();
         int izbor = 0;
         do {
@@ -67,7 +64,7 @@ public class Main {
                     break;
                 case 7:
                     exitProgram();
-                    SerializeKorisnike(korisnici);
+                    writeToFile(korisnici);
                     return;
                  //   break;
 
@@ -115,12 +112,14 @@ public class Main {
         return countGodine;
     }
 
-    static void writeToFile()
+    static void writeToFile(ArrayList<Korisnik> korisnici)
     {
         try {
             FileWriter fileOut = new FileWriter("Korisnik.txt");
             BufferedWriter out = new BufferedWriter(fileOut);
-            out.write("Test Korisnik");
+            for(Korisnik k: korisnici) {
+                out.write(k.toString());
+            }
             System.out.printf("Data is saved in Korisnik.txt");
             out.close();
             fileOut.close();
@@ -134,12 +133,41 @@ public class Main {
     static void readFromFile()
     {
         try {
-            FileReader fileIn = new FileReader("Korisnik.txt");
-            BufferedReader in = new BufferedReader(fileIn);
-            String line = in.readLine();
-            System.out.printf(line);
-            in.close();
-            fileIn.close();
+            int count = 0;
+            FileReader fr = new FileReader("Korisnik.txt");
+            BufferedReader br = new BufferedReader(fr);
+
+            String linija;
+            do {
+                linija = br.readLine();
+
+                if(linija == null) break;
+                    // jim,jim@gmail.com,NEMA,N,A
+
+                Korisnik k = new Korisnik();
+                try {
+                    String[] rijeci = linija.split(",");
+                    k.setName(rijeci[0]);
+                    k.email = rijeci[1];
+                    String sDate = rijeci[2];
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-YYYY");
+                    k.dob = sDate.equals("NEMA") ? null : sdf.parse(sDate);
+                    k.setPol(rijeci[3].charAt(0));
+                    k.status = Korisnik.STATUS.ACTIVE;
+                }
+                catch(Exception e)
+                {
+                    System.out.println("Problem sa ucitavanjem korisnika " + e.getMessage());
+                }
+                korisnici.add(k);
+                count++;
+
+            } while(linija != null);
+
+
+            br.close();
+            fr.close();
+            System.out.printf("Loaded " + count + " korisnika /n");
         }
         catch (IOException i)
         {
@@ -245,41 +273,41 @@ public class Main {
         System.out.println("exitProgram");
     }
 
-    static void SerializeKorisnike(ArrayList<Korisnik> korisnici) {
-
-        try {
-            FileOutputStream fileOut =
-                    new FileOutputStream("/tmp/korisnici.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(korisnici);
-            out.close();
-            fileOut.close();
-            System.out.printf("Serialized data is saved in /tmp/korisnici.ser");
-        } catch (IOException i) {
-            i.printStackTrace();
-        }
-    }
-
-    static void DeserializeKorisnike() {
-        {
-            try {
-                FileInputStream fileIn = new FileInputStream("/tmp/korisnici.ser");
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                korisnici = (ArrayList<Korisnik>) in.readObject();
-                in.close();
-                fileIn.close();
-            } catch (IOException i) {
-                i.printStackTrace();
-                return;
-            } catch (ClassNotFoundException c) {
-                System.out.println("Employee class not found");
-                c.printStackTrace();
-                return;
-            }
-
-
-        }
-
-    }
+//    static void SerializeKorisnike(ArrayList<Korisnik> korisnici) {
+//
+//        try {
+//            FileOutputStream fileOut =
+//                    new FileOutputStream("/tmp/korisnici.ser");
+//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//            out.writeObject(korisnici);
+//            out.close();
+//            fileOut.close();
+//            System.out.printf("Serialized data is saved in /tmp/korisnici.ser");
+//        } catch (IOException i) {
+//            i.printStackTrace();
+//        }
+//    }
+//
+//    static void DeserializeKorisnike() {
+//        {
+//            try {
+//                FileInputStream fileIn = new FileInputStream("/tmp/korisnici.ser");
+//                ObjectInputStream in = new ObjectInputStream(fileIn);
+//                korisnici = (ArrayList<Korisnik>) in.readObject();
+//                in.close();
+//                fileIn.close();
+//            } catch (IOException i) {
+//                i.printStackTrace();
+//                return;
+//            } catch (ClassNotFoundException c) {
+//                System.out.println("Employee class not found");
+//                c.printStackTrace();
+//                return;
+//            }
+//
+//
+//        }
+//
+//    }
 
 }
